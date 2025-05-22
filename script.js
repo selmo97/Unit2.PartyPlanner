@@ -26,12 +26,42 @@ const renderParties = () => {
       const partyElement = document.createElement("div");
       partyElement.classList.add("party");
       partyElement.textContent = party.name;
+      partyElement.addEventListener("click", () => {
+        fetchSingleParty(party.id);
+      });
 
       appContainer.appendChild(partyElement);
     });
   } catch (err) {
     console.error("Error rendering parties:", err);
   }
+};
+
+const renderSelectedParty = () => {
+    appContainer.innerHTML = "";
+
+    if (!state.selectedParty) {
+        appContainer.textContent = "Please select a party..";
+        return;
+    }
+
+    const party = state.selectedParty;
+
+    const detailDiv = document.createElement("div");
+    detailDiv.innerHTML = `
+        <h2>${party.name}</h2>
+        <p>ID: ${party.id}</p>
+        <p>Date: ${party.date}</p>
+        <p>Location: ${party.location}</p>
+        <p>Description: ${party.description}</p>
+        <button id="backToList">Back to All Parties</button>
+    `;
+
+    appContainer.appendChild(detailDiv);
+
+    document.getElementById("backToList").addEventListener("click", () => {
+        renderParties();
+    });
 };
 
 // Fetch and render
@@ -46,9 +76,22 @@ const fetchAllParties = async () => {
   }
 };
 
+const fetchSingleParty = async (partyId) => {
+    try {
+        
+        const response = await fetch(`${API_URL}/events/${partyId}`);
+        const { data } = await response.json();
+        state.selectedParty = data;
+        renderSelectedParty(); // render detailed view 
+    } catch (err) {
+        console.error('Error fetching single party:', err);
+    }
+};
+
 const init = async () => {
   await fetchAllParties(); //fetch and store using state
   renderParties(); // render the events to the DOM
+
 };
 
 init();
