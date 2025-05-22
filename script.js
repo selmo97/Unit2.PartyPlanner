@@ -7,47 +7,48 @@ const appContainer = document.getElementById("app"); // Get #app container
 //state
 
 let state = {
-  events: [], //array of event objects
+  parties: [], //array of party objects
+  selectedParty: null
 };
 
 /* 
-Define function to render events
+Define function to render parties
     a. use forEach to loop through the data
     b. create a list element for each element in the array
     c. append the list item to the appContainer
 
 */
-const renderEvents = () => {
+const renderParties = () => {
   try {
     appContainer.innerHTML = ""; // clear previous content
 
-    state.events.forEach((event) => {
-      const eventElement = document.createElement("div");
-      eventElement.classList.add("event");
-      eventElement.textContent = event.name;
+    state.parties.forEach((party) => {
+      const partyElement = document.createElement("div");
+      partyElement.classList.add("party");
+      partyElement.textContent = party.name;
 
-      appContainer.appendChild(eventElement);
+      appContainer.appendChild(partyElement);
     });
   } catch (err) {
-    console.error("Error rendering events:", err);
+    console.error("Error rendering parties:", err);
   }
 };
 
 // Fetch and render
-const fetchAllEvents = async () => {
+const fetchAllParties = async () => {
   try {
     const response = await fetch(`${API_URL}/events`);
     const data = await response.json();
     console.log(data);
-    state.events = data.data;
+    state.parties = data.data;
   } catch (err) {
     console.error("Uh oh, trouble fetching events!", err);
   }
 };
 
 const init = async () => {
-  await fetchAllEvents(); //fetch and store using state
-  renderEvents(); // render the events to the DOM
+  await fetchAllParties(); //fetch and store using state
+  renderParties(); // render the events to the DOM
 };
 
 init();
